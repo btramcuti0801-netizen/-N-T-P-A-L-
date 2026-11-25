@@ -1,0 +1,1159 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GEO QUEST - Khám phá thế giới</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Be Vietnam Pro',sans-serif;background:#eaf5ff;color:#17436b}
+header{background:#1769aa;color:white;padding:16px 6%;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.logo{font-size:23px;font-weight:800;letter-spacing:1px}
+header span{color:#ffdf55}
+nav{display:flex;flex-wrap:wrap;gap:8px}
+nav button{background:transparent;color:white;border:1px solid #ffffff70;padding:9px 13px;border-radius:8px;cursor:pointer;font-family:inherit;font-weight:600}
+nav button:hover{background:#ffffff25}
+.screen{display:none;padding:35px 7%;min-height:80vh}
+.screen.active{display:block}
+.hero{text-align:center;padding:65px 15px;background:linear-gradient(135deg,#1769aa,#55a8e8);border-radius:22px;color:white}
+.hero h1{font-size:clamp(32px,6vw,55px);font-weight:800;margin-bottom:15px}
+.hero h1 span{color:#ffdf55}
+.hero p{max-width:650px;margin:0 auto 25px;line-height:1.8}
+button{font-family:inherit}
+.main-btn{background:#ffdf55;color:#17436b;border:none;border-radius:10px;padding:13px 23px;font-size:15px;font-weight:800;cursor:pointer;margin:5px}
+.main-btn:hover{transform:translateY(-2px);filter:brightness(1.04)}
+.secondary-btn{background:white;color:#1769aa;border:2px solid #1769aa;border-radius:10px;padding:11px 20px;font-weight:700;cursor:pointer;margin:5px}
+.section-title{font-size:27px;font-weight:800;margin-bottom:12px;color:#1769aa}
+.subtitle{line-height:1.8;margin-bottom:25px;color:#55748e}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-top:30px}
+.card{background:white;border-radius:15px;padding:23px;box-shadow:0 4px 15px #17436b12;border:1px solid #d7eafa}
+.card h3{color:#1769aa;margin-bottom:12px}
+.card p{line-height:1.8;color:#58748b}
+.card .emoji{font-size:35px;margin-bottom:12px}
+.content-box{background:white;border-radius:15px;padding:23px;margin:18px 0;box-shadow:0 4px 15px #17436b10}
+.content-box h3{color:#1769aa;margin-bottom:12px}
+.content-box p,.content-box li{line-height:1.9}
+.formula{background:#edf7ff;border-left:5px solid #1769aa;padding:13px 16px;margin:12px 0;border-radius:6px;font-weight:700;color:#17436b;line-height:1.8}
+.note{background:#fff8dc;border-left:5px solid #e2b52e;padding:13px 16px;border-radius:6px;margin-top:15px;line-height:1.8}
+.quiz-info{background:#fff8dc;border:1px solid #f3d66e;border-radius:12px;padding:16px;line-height:1.8;margin:20px 0}
+.question-card{background:white;border-radius:14px;padding:20px;margin:18px 0;box-shadow:0 4px 15px #17436b10;border:1px solid #d7eafa}
+.question-card h3{font-size:16px;line-height:1.7;margin-bottom:15px}
+.question-number{color:#1769aa;font-weight:800;margin-right:5px}
+.option{display:block;background:#f1f8ff;border:1px solid #d6e9f8;border-radius:9px;padding:12px;margin:9px 0;cursor:pointer;line-height:1.6}
+.option:hover{background:#e1f1ff}
+.option input{margin-right:9px;accent-color:#1769aa}
+.option:has(input:disabled){cursor:default}
+.answer-feedback{display:none;background:#fff8d9;border-left:5px solid #e2a900;padding:14px;margin-top:14px;line-height:1.8;font-size:14px;border-radius:4px}
+.answer-feedback.correct{background:#e5f8e9;border-left-color:#26934a}
+.answer-feedback.wrong{background:#fff0e8;border-left-color:#e07835}
+.answer-feedback strong{color:#1769aa}
+#quiz-result{display:none;background:white;padding:23px;border-radius:15px;margin-top:20px;line-height:1.8;border:2px solid #d7eafa}
+.game-wrapper{width:100%;max-width:1000px;margin:20px auto;background:#b9e7ff;border:5px solid #1769aa;border-radius:15px;overflow:hidden;box-shadow:0 6px 18px #17436b20}
+.game-topbar{background:#1769aa;color:white;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;font-weight:700}
+.game-topbar span{color:#ffdf55}
+#gameCanvas{width:100%;display:block;background:#8ed8ff;image-rendering:pixelated;touch-action:none}
+.game-controls{background:#eaf5ff;padding:12px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.control-group{display:flex;gap:10px}
+.game-control-btn{width:58px;height:52px;border:2px solid #1769aa;border-radius:12px;background:white;color:#1769aa;font-size:23px;font-weight:800;cursor:pointer;touch-action:none;user-select:none;-webkit-user-select:none}
+.game-control-btn:active{background:#ffdf55;transform:scale(.95)}
+.game-message{text-align:center;padding:12px;background:#fff8dc;color:#17436b;line-height:1.7}
+
+/* BẢNG CÂU HỎI THU THẬP XU */
+.coin-modal{display:none;position:fixed;inset:0;z-index:9999;background:#173d5ccc;justify-content:center;align-items:center;padding:18px}
+.coin-modal.show{display:flex}
+.coin-box{background:white;width:100%;max-width:520px;padding:25px;border-radius:18px;border:4px solid #1769aa;text-align:center;box-shadow:0 8px 30px #0004;max-height:90vh;overflow-y:auto}
+.coin-box h2{color:#1769aa;margin-bottom:15px}
+.coin-question{font-weight:700;line-height:1.8;margin:15px 0;color:#17436b;text-align:left}
+.coin-input{width:100%;padding:13px;border:2px solid #b9d9f0;border-radius:10px;font-size:18px;text-align:center;font-family:inherit;outline:none}
+.coin-input:focus{border-color:#1769aa}
+.coin-feedback{margin-top:15px;padding:14px;border-radius:10px;line-height:1.7;display:none}
+.coin-feedback.good{display:block;background:#e5f8e9;color:#176b36}
+.coin-feedback.bad{display:block;background:#fff0e8;color:#a84b26}
+.coin-actions{margin-top:15px}
+
+footer{background:#17436b;color:white;text-align:center;padding:20px;line-height:1.8}
+@media(max-width:600px){
+header{justify-content:center;text-align:center}
+nav{justify-content:center}
+.screen{padding:25px 5%}
+.hero{padding:45px 15px}
+.game-control-btn{width:54px;height:50px}
+.game-topbar{font-size:13px}
+.coin-box{padding:20px}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="logo">GEO <span>QUEST</span> 🌍</div>
+<nav>
+<button onclick="showScreen('home')">Trang chủ</button>
+<button onclick="showScreen('theory')">Ôn tập</button>
+<button onclick="showScreen('ticket')">Lấy vé</button>
+<button onclick="showScreen('game')">Trò chơi</button>
+</nav>
+</header>
+
+<!-- TRANG CHỦ -->
+<section id="home" class="screen active">
+<div class="hero">
+<h1>GEO <span>QUEST</span></h1>
+<p>Hành trình khám phá thế giới bắt đầu từ những kiến thức Địa lí tưởng chừng khô khan. Hãy ôn tập, vượt qua thử thách và mở khóa chuyến phiêu lưu của bạn!</p>
+<button class="main-btn" onclick="showScreen('theory')">BẮT ĐẦU KHÁM PHÁ →</button>
+</div>
+<div class="cards">
+<div class="card"><div class="emoji">📚</div><h3>Ôn tập kiến thức</h3><p>Hệ thống công thức và cách đổi đơn vị cần ghi nhớ.</p></div>
+<div class="card"><div class="emoji">🎟️</div><h3>Chinh phục thử thách</h3><p>Trả lời câu hỏi để nhận tấm vé bước vào cuộc phiêu lưu.</p></div>
+<div class="card"><div class="emoji">🎮</div><h3>Khám phá thế giới</h3><p>Vượt qua các chướng ngại vật và thử thách kiến thức.</p></div>
+</div>
+</section>
+
+<!-- ÔN TẬP 1 -->
+<section id="theory" class="screen">
+<h2 class="section-title">📚 KHU ÔN TẬP</h2>
+<p class="subtitle">Tổng hợp các công thức tính toán thường gặp trong Địa lí.</p>
+
+<div class="content-box">
+<h3>1. GDP bình quân đầu người và GNI bình quân đầu người</h3>
+<div class="formula">GDP/người = GDP / Dân số</div>
+<div class="formula">GNI/người = GNI / Dân số</div>
+<p>Đơn vị thường gặp: USD/người.</p>
+</div>
+
+<div class="content-box">
+<h3>2. Tổng giá trị xuất nhập khẩu</h3>
+<div class="formula">Tổng giá trị XNK = Xuất khẩu + Nhập khẩu</div>
+<div class="formula">Cán cân XNK = Xuất khẩu - Nhập khẩu</div>
+<div class="formula">Xuất khẩu = (Tổng XNK + Cán cân XNK) / 2</div>
+<div class="formula">Nhập khẩu = (Tổng XNK - Cán cân XNK) / 2</div>
+</div>
+
+<div class="content-box">
+<h3>3. Tính tỉ trọng</h3>
+<div class="formula">Tỉ trọng (%) = (Giá trị thành phần / Tổng giá trị) × 100</div>
+</div>
+
+<div class="content-box">
+<h3>4. Tính tốc độ tăng trưởng</h3>
+<div class="formula">Tốc độ tăng trưởng (%) = (Giá trị năm cần tính / Giá trị năm gốc) × 100</div>
+<div class="formula">Mức tăng (%) = [(Giá trị năm cần tính - Giá trị năm gốc) / Giá trị năm gốc] × 100</div>
+<div class="note">Lưu ý: Tốc độ tăng trưởng lấy năm gốc bằng 100%, còn mức tăng là phần trăm tăng thêm so với năm gốc.</div>
+</div>
+
+<div class="content-box">
+<h3>5. Một số dạng câu hỏi tính toán thường gặp</h3>
+<div class="formula">Gấp bao nhiêu lần → Dùng phép chia</div>
+<div class="formula">Tăng thêm bao nhiêu → Dùng phép trừ</div>
+<div class="formula">Chênh lệch bao nhiêu → Dùng phép trừ</div>
+<div class="note"><strong>Ví dụ:</strong><br>• A gấp B bao nhiêu lần = A / B.<br>• A tăng thêm bao nhiêu so với B = A - B.<br>• Chênh lệch giữa A và B = |A - B|.</div>
+</div>
+
+<div class="content-box">
+<h3>6. Mật độ dân số</h3>
+<div class="formula">Mật độ dân số = Dân số / Diện tích</div>
+<p>Đơn vị: người/km².</p>
+</div>
+
+<button class="main-btn" onclick="showScreen('theory2')">TIẾP THEO →</button>
+<button class="secondary-btn" onclick="showScreen('home')">Quay lại</button>
+</section>
+
+<!-- ÔN TẬP 2 -->
+<section id="theory2" class="screen">
+<h2 class="section-title">📖 ÔN TẬP ĐƠN VỊ</h2>
+<p class="subtitle">Ghi nhớ các đơn vị và quy tắc chuyển đổi.</p>
+<div class="content-box">
+<h3>1. Các đơn vị thường gặp</h3>
+<div class="formula">1 nghìn = 1.000</div>
+<div class="formula">1 triệu = 1.000.000</div>
+<div class="formula">1 tỉ = 1.000.000.000</div>
+<div class="formula">1 nghìn tỉ = 1.000.000.000.000</div>
+</div>
+<div class="content-box">
+<h3>2. Quy tắc đổi đơn vị</h3>
+<div class="formula">Đơn vị nhỏ → đơn vị lớn: Chia</div>
+<div class="formula">Đơn vị lớn → đơn vị nhỏ: Nhân</div>
+<div class="note">Ví dụ:<br>3 tỉ = 3.000 triệu<br>4.500 triệu = 4,5 tỉ<br>2 nghìn tỉ = 2.000 tỉ</div>
+</div>
+<button class="main-btn" onclick="showScreen('ticket')">ĐÃ ÔN TẬP - ĐI LẤY VÉ →</button>
+<button class="secondary-btn" onclick="showScreen('theory')">Quay lại</button>
+</section>
+
+<!-- LẤY VÉ -->
+<section id="ticket" class="screen">
+<h2 class="section-title">🎟️ THỬ THÁCH LẤY VÉ</h2>
+<p class="subtitle">Vượt qua bài kiểm tra để mở khóa cánh cổng phiêu lưu!</p>
+<div class="quiz-info">
+<strong>THÔNG TIN THỬ THÁCH</strong><br>
+• Ngân hàng câu hỏi: 30 câu.<br>
+• Mỗi lượt làm bài: 5 câu ngẫu nhiên.<br>
+• Đạt ít nhất 3/5 câu để nhận vé.<br>
+• Sau khi nộp bài, bạn sẽ được xem đáp án và giải thích.
+</div>
+<div id="quiz-container"></div>
+<button class="main-btn" id="submit-quiz" onclick="checkQuiz()">NỘP BÀI</button>
+<div id="quiz-result"></div>
+<button class="secondary-btn" onclick="showScreen('theory')">Ôn tập lại</button>
+<button class="secondary-btn" onclick="showScreen('home')">Trang chủ</button>
+</section>
+
+<!-- GAME -->
+<section id="game" class="screen">
+<h2 class="section-title">🌳 GREEN MEADOW</h2>
+<p class="subtitle">Chào mừng nhà thám hiểm đến với đồng cỏ xanh! Hãy vượt qua các bục nhảy, né chướng ngại vật, thu thập xu và tiến đến lá cờ đích.</p>
+
+<div class="game-wrapper">
+<div class="game-topbar">
+<div>🌍 GEO QUEST</div>
+<div>🪙 Xu: <span id="coinCount">0</span></div>
+<div>❤️ Mạng: <span id="lifeCount">3</span></div>
+<div>📍 MAP 01</div>
+</div>
+
+<canvas id="gameCanvas" width="960" height="420"></canvas>
+
+<div class="game-message" id="gameMessage">Dùng ← → để di chuyển, phím Space để nhảy. Trên điện thoại, dùng các nút bên dưới nhé!</div>
+
+<div class="game-controls">
+<div class="control-group">
+<button class="game-control-btn" id="leftBtn">←</button>
+<button class="game-control-btn" id="rightBtn">→</button>
+</div>
+<button class="game-control-btn" id="jumpBtn">↑</button>
+</div>
+</div>
+
+<div style="text-align:center;margin-top:15px">
+<button class="main-btn" onclick="restartGame()">↻ CHƠI LẠI</button>
+<button class="secondary-btn" onclick="showScreen('home')">Về trang chủ</button>
+</div>
+</section>
+
+<!-- BẢNG CÂU HỎI XU -->
+<div class="coin-modal" id="coinModal">
+<div class="coin-box">
+<h2 id="coinTitle">🪙 THỬ THÁCH NHẬN XU</h2>
+<div class="coin-question" id="coinQuestion"></div>
+<input class="coin-input" id="coinAnswer" type="text" inputmode="decimal" placeholder="Nhập đáp án của bạn...">
+<div class="coin-feedback" id="coinFeedback"></div>
+<div class="coin-actions">
+<button class="main-btn" id="coinSubmit" onclick="checkCoinAnswer()">KIỂM TRA</button>
+<button class="secondary-btn" id="coinContinue" style="display:none" onclick="closeCoinModal()">TIẾP TỤC</button>
+</div>
+</div>
+</div>
+
+<footer>
+<strong>GEO QUEST 🌍</strong><br>
+Học tập sáng tạo - Khám phá thế giới
+</footer>
+
+<script>
+
+/* CHUYỂN TRANG */
+function showScreen(screenId){
+document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+document.getElementById(screenId).classList.add('active');
+if(screenId==='ticket')createQuiz();
+}
+
+/* NGÂN HÀNG 30 CÂU HỎI LẤY VÉ */
+const questionBank=[
+{question:"Công thức tính GDP bình quân đầu người là:",options:["GDP × Dân số","GDP / Dân số","Dân số / GDP","GDP + Dân số"],correct:1,explanation:"GDP bình quân đầu người được tính bằng cách lấy tổng GDP chia cho dân số. Kết quả thường có đơn vị USD/người."},
+{question:"Công thức tính GNI bình quân đầu người là:",options:["GNI / Dân số","GNI × Dân số","Dân số / GNI","GNI + Dân số"],correct:0,explanation:"Lấy tổng GNI chia cho dân số để tính GNI bình quân đầu người."},
+{question:"Công thức tính tổng giá trị xuất nhập khẩu là:",options:["Xuất khẩu - Nhập khẩu","Xuất khẩu / Nhập khẩu","Xuất khẩu + Nhập khẩu","Xuất khẩu × Nhập khẩu"],correct:2,explanation:"Tổng giá trị xuất nhập khẩu bằng tổng giá trị xuất khẩu cộng với giá trị nhập khẩu."},
+{question:"Công thức tính cán cân xuất nhập khẩu là:",options:["Xuất khẩu + Nhập khẩu","Nhập khẩu - Xuất khẩu","Xuất khẩu - Nhập khẩu","Xuất khẩu × Nhập khẩu"],correct:2,explanation:"Cán cân xuất nhập khẩu được tính bằng giá trị xuất khẩu trừ giá trị nhập khẩu. Kết quả dương là xuất siêu, âm là nhập siêu."},
+{question:"Muốn tìm trị giá xuất khẩu khi biết tổng XNK và cán cân XNK, ta dùng:",options:["(Tổng XNK + Cán cân XNK) / 2","(Tổng XNK - Cán cân XNK) / 2","Tổng XNK × Cán cân XNK","Tổng XNK / Cán cân XNK"],correct:0,explanation:"Cộng tổng XNK với cán cân XNK rồi chia 2 sẽ tìm được xuất khẩu."},
+{question:"Muốn tìm trị giá nhập khẩu khi biết tổng XNK và cán cân XNK, ta dùng:",options:["(Tổng XNK + Cán cân XNK) / 2","(Tổng XNK - Cán cân XNK) / 2","Tổng XNK + Cán cân XNK","Tổng XNK × Cán cân XNK"],correct:1,explanation:"Lấy tổng XNK trừ cán cân XNK rồi chia 2 sẽ tìm được giá trị nhập khẩu."},
+{question:"Công thức tính tỉ trọng của một thành phần là:",options:["(Tổng giá trị / Giá trị thành phần) × 100","Giá trị thành phần × Tổng giá trị","(Giá trị thành phần / Tổng giá trị) × 100","Giá trị thành phần + Tổng giá trị"],correct:2,explanation:"Tỉ trọng bằng giá trị thành phần chia cho tổng giá trị, sau đó nhân 100."},
+{question:"Công thức tính mật độ dân số là:",options:["Diện tích / Dân số","Dân số / Diện tích","Dân số × Diện tích","Dân số + Diện tích"],correct:1,explanation:"Mật độ dân số bằng dân số chia cho diện tích, đơn vị thường là người/km²."},
+{question:"Công thức tính tốc độ tăng trưởng với năm gốc bằng 100% là:",options:["(Giá trị năm gốc / Giá trị năm cần tính) × 100","(Giá trị năm cần tính / Giá trị năm gốc) × 100","Giá trị năm cần tính - Giá trị năm gốc","Giá trị năm cần tính × Giá trị năm gốc"],correct:1,explanation:"Lấy giá trị năm cần tính chia cho giá trị năm gốc rồi nhân 100."},
+{question:"Công thức tính mức tăng (%) so với năm gốc là:",options:["(Giá trị năm cần tính / Giá trị năm gốc) × 100","[(Giá trị năm cần tính - Giá trị năm gốc) / Giá trị năm gốc] × 100","Giá trị năm gốc / 100","Giá trị năm cần tính + Giá trị năm gốc"],correct:1,explanation:"Lấy phần giá trị tăng thêm chia cho giá trị năm gốc rồi nhân 100."},
+{question:"Biết GDP bình quân đầu người và dân số, muốn tính GDP thì:",options:["GDP = GDP/người / Dân số","GDP = GDP/người + Dân số","GDP = GDP/người × Dân số","GDP = Dân số / GDP/người"],correct:2,explanation:"Từ GDP/người = GDP / Dân số, suy ra GDP = GDP/người × Dân số."},
+{question:"Biết mật độ dân số và diện tích, muốn tính dân số thì:",options:["Dân số = Mật độ × Diện tích","Dân số = Mật độ / Diện tích","Dân số = Diện tích / Mật độ","Dân số = Mật độ + Diện tích"],correct:0,explanation:"Dân số = mật độ dân số × diện tích."},
+{question:"Biết tỉ trọng (%) và tổng giá trị, muốn tìm giá trị thành phần thì:",options:["Giá trị thành phần = Tổng giá trị × Tỉ trọng / 100","Giá trị thành phần = Tổng giá trị / Tỉ trọng","Giá trị thành phần = Tổng giá trị + Tỉ trọng","Giá trị thành phần = Tổng giá trị - Tỉ trọng"],correct:0,explanation:"Lấy tổng giá trị nhân với tỉ trọng rồi chia 100."},
+{question:"Trong công thức tính tốc độ tăng trưởng, năm gốc là:",options:["Năm có giá trị lớn nhất","Năm có giá trị nhỏ nhất","Năm được chọn làm mốc so sánh","Năm cuối cùng của bảng số liệu"],correct:2,explanation:"Năm gốc là năm được chọn làm mốc để so sánh với các năm khác."},
+{question:"Đơn vị thường dùng để biểu thị mật độ dân số là:",options:["USD/người","Người/km²","Km/người","%"],correct:1,explanation:"Mật độ dân số thể hiện số người trung bình trên một đơn vị diện tích."},
+{question:"1 tỉ bằng bao nhiêu triệu?",options:["10 triệu","100 triệu","1.000 triệu","10.000 triệu"],correct:2,explanation:"1 tỉ = 1.000 triệu."},
+{question:"3 tỉ bằng bao nhiêu triệu?",options:["300 triệu","3.000 triệu","30.000 triệu","300.000 triệu"],correct:1,explanation:"3 × 1.000 = 3.000 triệu."},
+{question:"2,5 nghìn tỉ bằng bao nhiêu tỉ?",options:["25 tỉ","250 tỉ","2.500 tỉ","25.000 tỉ"],correct:2,explanation:"2,5 × 1.000 = 2.500 tỉ."},
+{question:"4.500 triệu bằng bao nhiêu tỉ?",options:["0,45 tỉ","4,5 tỉ","45 tỉ","450 tỉ"],correct:1,explanation:"4.500 / 1.000 = 4,5 tỉ."},
+{question:"0,75 tỉ bằng bao nhiêu triệu?",options:["75 triệu","750 triệu","7.500 triệu","750.000 triệu"],correct:1,explanation:"0,75 × 1.000 = 750 triệu."},
+{question:"6 triệu bằng bao nhiêu nghìn?",options:["60 nghìn","600 nghìn","6.000 nghìn","60.000 nghìn"],correct:2,explanation:"6 × 1.000 = 6.000 nghìn."},
+{question:"12.000 nghìn bằng bao nhiêu triệu?",options:["1,2 triệu","12 triệu","120 triệu","1.200 triệu"],correct:1,explanation:"12.000 / 1.000 = 12 triệu."},
+{question:"0,008 tỉ bằng bao nhiêu triệu?",options:["0,8 triệu","8 triệu","80 triệu","800 triệu"],correct:1,explanation:"0,008 × 1.000 = 8 triệu."},
+{question:"1 nghìn tỉ bằng bao nhiêu tỉ?",options:["100 tỉ","1.000 tỉ","10.000 tỉ","100.000 tỉ"],correct:1,explanation:"1 nghìn tỉ = 1.000 tỉ."},
+{question:"5 tỉ bằng bao nhiêu nghìn?",options:["50.000 nghìn","500.000 nghìn","5.000.000 nghìn","50.000.000 nghìn"],correct:2,explanation:"5 tỉ = 5.000.000 nghìn."},
+{question:"0,5 nghìn tỉ bằng bao nhiêu tỉ?",options:["5 tỉ","50 tỉ","500 tỉ","5.000 tỉ"],correct:2,explanation:"0,5 × 1.000 = 500 tỉ."},
+{question:"8.000 triệu bằng bao nhiêu tỉ?",options:["0,8 tỉ","8 tỉ","80 tỉ","800 tỉ"],correct:1,explanation:"8.000 / 1.000 = 8 tỉ."},
+{question:"2,4 tỉ bằng bao nhiêu triệu?",options:["24 triệu","240 triệu","2.400 triệu","24.000 triệu"],correct:2,explanation:"2,4 × 1.000 = 2.400 triệu."},
+{question:"750 triệu bằng bao nhiêu tỉ?",options:["0,075 tỉ","0,75 tỉ","7,5 tỉ","75 tỉ"],correct:1,explanation:"750 / 1.000 = 0,75 tỉ."},
+{question:"3.000 tỉ bằng bao nhiêu nghìn tỉ?",options:["0,3 nghìn tỉ","3 nghìn tỉ","30 nghìn tỉ","300 nghìn tỉ"],correct:1,explanation:"3.000 / 1.000 = 3 nghìn tỉ."},
+{question:"1 triệu bằng bao nhiêu nghìn?",options:["10 nghìn","100 nghìn","1.000 nghìn","10.000 nghìn"],correct:2,explanation:"1 triệu = 1.000 nghìn."}
+];
+
+function shuffleArray(array){
+const result=[...array];
+for(let i=result.length-1;i>0;i--){
+const j=Math.floor(Math.random()*(i+1));
+[result[i],result[j]]=[result[j],result[i]];
+}
+return result;
+}
+
+/* TẠO ĐỀ LẤY VÉ */
+let currentQuestions=[];
+let quizSubmitted=false;
+let previousQuestionSet="";
+
+function createQuiz(){
+quizSubmitted=false;
+document.getElementById('quiz-result').style.display='none';
+document.getElementById('submit-quiz').style.display='inline-block';
+document.getElementById('submit-quiz').disabled=false;
+
+let selectedQuestions=[];
+let currentSet="";
+
+do{
+selectedQuestions=shuffleArray(questionBank).slice(0,5);
+currentSet=selectedQuestions.map(q=>questionBank.indexOf(q)).sort((a,b)=>a-b).join(",");
+}while(currentSet===previousQuestionSet&&questionBank.length>5);
+
+previousQuestionSet=currentSet;
+
+currentQuestions=selectedQuestions.map(q=>{
+const correctAnswer=q.options[q.correct];
+const shuffledOptions=shuffleArray(q.options);
+return {...q,options:shuffledOptions,correct:shuffledOptions.indexOf(correctAnswer)};
+});
+
+renderQuiz();
+}
+
+function renderQuiz(){
+const container=document.getElementById('quiz-container');
+container.innerHTML="";
+
+currentQuestions.forEach((question,index)=>{
+let optionsHTML="";
+question.options.forEach((option,optionIndex)=>{
+optionsHTML+=`
+<label class="option">
+<input type="radio" name="question${index}" value="${optionIndex}">
+${String.fromCharCode(65+optionIndex)}. ${option}
+</label>`;
+});
+
+container.innerHTML+=`
+<div class="question-card">
+<h3><span class="question-number">Câu ${index+1}:</span>${question.question}</h3>
+${optionsHTML}
+<div class="answer-feedback" id="feedback${index}"></div>
+</div>`;
+});
+}
+
+function checkQuiz(){
+if(quizSubmitted)return;
+
+let score=0;
+let answered=0;
+
+currentQuestions.forEach((question,index)=>{
+const selected=document.querySelector(`input[name="question${index}"]:checked`);
+if(selected)answered++;
+});
+
+if(answered<5){
+alert("Bạn hãy hoàn thành cả 5 câu hỏi trước khi nộp bài nhé!");
+return;
+}
+
+quizSubmitted=true;
+
+currentQuestions.forEach((question,index)=>{
+const selected=document.querySelector(`input[name="question${index}"]:checked`);
+const chosenAnswer=Number(selected.value);
+const isCorrect=chosenAnswer===question.correct;
+
+if(isCorrect)score++;
+
+document.querySelectorAll(`input[name="question${index}"]`).forEach(input=>input.disabled=true);
+
+const feedback=document.getElementById(`feedback${index}`);
+const correctLetter=String.fromCharCode(65+question.correct);
+const correctText=question.options[question.correct];
+
+if(isCorrect){
+feedback.className="answer-feedback correct";
+feedback.innerHTML=`<strong>✓ Chính xác!</strong><br>Bạn đã chọn đúng đáp án ${correctLetter}.<br><strong>Giải thích:</strong> ${question.explanation}`;
+}else{
+feedback.className="answer-feedback wrong";
+feedback.innerHTML=`<strong>✗ Chưa chính xác!</strong><br>Đáp án đúng là: <strong>${correctLetter}. ${correctText}</strong><br><strong>Giải thích:</strong> ${question.explanation}`;
+}
+feedback.style.display="block";
+});
+
+const result=document.getElementById('quiz-result');
+result.style.display="block";
+
+if(score>=3){
+result.innerHTML=`
+<h2 style="color:#26934a">🎉 CHÚC MỪNG!</h2>
+<p>Bạn đạt <strong>${score}/5 câu đúng</strong>. Bạn đã vượt qua thử thách và nhận được tấm vé bước vào thế giới GEO QUEST!</p>
+<button class="main-btn" onclick="showScreen('game')">VÀO TRÒ CHƠI →</button>`;
+}else{
+result.innerHTML=`
+<h2 style="color:#d97735">💪 CỐ GẮNG THÊM NHÉ!</h2>
+<p>Bạn đạt <strong>${score}/5 câu đúng</strong>. Cần ít nhất 3 câu đúng để nhận vé. Hãy xem lại phần giải thích, ôn tập và thử lại nhé!</p>
+<button class="main-btn" onclick="createQuiz()">THỬ LẠI</button>`;
+}
+
+document.getElementById('submit-quiz').style.display="none";
+result.scrollIntoView({behavior:"smooth",block:"center"});
+}
+
+/* =================================
+   NGÂN HÀNG 28 CÂU HỎI THU THẬP XU
+================================= */
+
+const coinQuestions=[
+{q:"Năm 2000, tổng vốn đầu tư nước ngoài vào các nước đạt 1,4 tỉ USD, năm 2021 đã lên đến 1,6 nghìn tỉ USD. Vậy năm 2021 tổng vốn đầu tư nước ngoài so với năm 2000 gấp bao nhiêu lần? (Làm tròn đến hàng đơn vị).",a:1143,unit:"lần"},
+{q:"Năm 2020, dân số Mĩ La-tinh là 652,3 triệu người, trong đó dân số trong độ tuổi lao động là 438,3 triệu người. Tính tỉ lệ dân số trong độ tuổi lao động (làm tròn đến hàng phần mười của %).",a:67.2,unit:"%"},
+{q:"Năm 2021, GDP Ca-na-đa là 1990,8 tỉ USD, dân số 37 triệu người. Tính GDP/người (làm tròn đến hàng đơn vị của nghìn USD).",a:53.8,unit:"nghìn USD"},
+{q:"Năm 2024, tổng trị giá xuất nhập khẩu nước ta đạt 786,3 tỉ USD và cán cân xuất nhập khẩu xuất siêu 24,8 tỉ USD. Tính trị giá xuất khẩu (làm tròn một chữ số thập phân).",a:405.6,unit:"tỉ USD"},
+{q:"Năm 2024, tổng diện tích rừng Bắc Trung Bộ và Duyên hải miền Trung là 5 642,4 nghìn ha, diện tích rừng tự nhiên là 3 935,8 nghìn ha. Tính tỉ trọng diện tích rừng còn lại (làm tròn một chữ số thập phân).",a:30.2,unit:"%"},
+{q:"Năm 2024, Đồng bằng sông Cửu Long có diện tích 40 922 km² và dân số 17 463,3 nghìn người. Tính mật độ dân số (làm tròn đến hàng đơn vị).",a:427,unit:"người/km²"},
+{q:"Năm 2021, EU có GDP 17 088,6 tỉ USD và dân số 447,7 triệu người. Tính GDP bình quân đầu người (làm tròn đến hàng đơn vị USD/người).",a:38170,unit:"USD/người"},
+{q:"Năm 2020, Hoa Kỳ có tổng trị giá xuất nhập khẩu 4 915,9 tỉ USD, cán cân xuất nhập khẩu -676,7 tỉ USD. Tính tỉ trọng trị giá xuất khẩu trong tổng trị giá xuất nhập khẩu (làm tròn một chữ số thập phân).",a:43.1,unit:"%"},
+{q:"Năm 2000, dân số Liên bang Nga là 146,6 triệu người; năm 2020 là 145,9 triệu người. Tính tốc độ tăng trưởng mật độ dân số năm 2020 so với năm 2000, lấy năm 2000 = 100%.",a:99.5,unit:"%"},
+{q:"Năm 2022, Mĩ La-tinh có diện tích 20 111,5 nghìn km² và dân số 659 300 nghìn người. Tính mật độ dân số (làm tròn một chữ số thập phân).",a:32.8,unit:"người/km²"},
+{q:"Năm 2020, Bra-xin có dân số 213,2 triệu người, dân số thành thị là 185,7 triệu người. Tính tỉ lệ dân nông thôn (làm tròn đến hàng đơn vị).",a:13,unit:"%"},
+{q:"Năm 2020, Nhật Bản có tổng trị giá xuất nhập khẩu 1 564,0 tỉ USD và cán cân xuất nhập khẩu 11,4 tỉ USD. Tính trị giá nhập khẩu (làm tròn một chữ số thập phân).",a:776.3,unit:"tỉ USD"},
+{q:"Năm 2020, Trung Quốc có GNI 14 631,8 tỉ USD và dân số 1 439,3 triệu người. Tính GNI bình quân đầu người (làm tròn đến hàng đơn vị).",a:10166,unit:"USD/người"},
+{q:"Năm 2024, sản lượng lúa Việt Nam là 43 triệu tấn, trong đó Đồng bằng sông Cửu Long đạt 24 triệu tấn. Tính tỉ trọng sản lượng lúa của vùng so với cả nước (làm tròn một chữ số thập phân).",a:55.8,unit:"%"},
+{q:"Năm 2023, Hoa Kỳ có GDP 27 360 tỉ USD và dân số 334,9 triệu người. Tính GDP bình quân đầu người (làm tròn đến hai chữ số thập phân của nghìn USD/người).",a:81.70,unit:"nghìn USD/người"},
+{q:"Năm 2023, Việt Nam có dân số 100,3 triệu người và diện tích 331 212 km². Tính mật độ dân số (làm tròn đến hàng đơn vị).",a:303,unit:"người/km²"},
+{q:"Năm 2023, Việt Nam có giá trị xuất khẩu 355,5 tỉ USD và nhập khẩu 327,5 tỉ USD. Tính cán cân xuất nhập khẩu.",a:28,unit:"tỉ USD"},
+{q:"Năm 2015, sản lượng lúa Việt Nam là 45,1 triệu tấn; năm 2023 là 43,5 triệu tấn. Tính tốc độ tăng trưởng năm 2023 so với năm 2015, lấy năm 2015 = 100%.",a:96.5,unit:"%"},
+{q:"Năm 2023, một quốc gia có GNI 360 tỉ USD và dân số 90 triệu người. Tính GNI bình quân đầu người.",a:4000,unit:"USD/người"},
+{q:"Năm 2024, tổng sản lượng thủy sản nước ta là 9,6 triệu tấn, sản lượng nuôi trồng là 5,7 triệu tấn. Tính tỉ trọng sản lượng thủy sản khai thác.",a:40.6,unit:"%"},
+{q:"Năm 2021, GDP Nam Phi đạt 419 tỉ USD. Nông nghiệp chiếm 2,5%, công nghiệp và xây dựng chiếm 24,5%. Tính trị giá dịch vụ và thuế sản phẩm trừ trợ cấp sản phẩm (làm tròn đến hàng đơn vị).",a:306,unit:"tỉ USD"},
+{q:"Năm 2021, Nhật Bản có diện tích 377 975 km², mật độ dân số 332 người/km² và tỉ lệ dân thành thị 91,9%. Tính số dân nông thôn (làm tròn hai chữ số thập phân).",a:10.16,unit:"triệu người"},
+{q:"Năm 2023, Trung Quốc có dân số 1 410 triệu người, Nhật Bản có dân số 124,5 triệu người. Dân số Trung Quốc gấp bao nhiêu lần Nhật Bản (làm tròn một chữ số thập phân)?",a:11.3,unit:"lần"},
+{q:"Năm 2023, Indonesia có dân số 278,7 triệu người, Malaysia có dân số 34,3 triệu người. Dân số Indonesia nhiều hơn Malaysia bao nhiêu tỉ người (làm tròn đến hàng phần trăm)?",a:0.24,unit:"tỉ người"},
+{q:"Năm 2015, sản lượng lúa đạt 32,5 triệu tấn; năm 2023 đạt 45,5 triệu tấn. Sản lượng lúa năm 2023 đã tăng thêm bao nhiêu lần so với năm 2015?",a:0.40,unit:"lần"},
+{q:"Năm 2023, Việt Nam có GDP 429,7 tỉ USD và dân số 100,3 triệu người. Tính GDP bình quân đầu người (làm tròn đến hàng đơn vị).",a:4284,unit:"USD/người"},
+{q:"Năm 2023, tổng trị giá xuất nhập khẩu Việt Nam là 681,1 tỉ USD, cán cân xuất nhập khẩu là 28,3 tỉ USD. Tính trị giá xuất khẩu (làm tròn một chữ số thập phân).",a:354.7,unit:"tỉ USD"},
+{q:"Năm 2022, sản lượng lúa Việt Nam đạt 42,7 triệu tấn; năm 2023 đạt 43,5 triệu tấn. Tính tốc độ tăng trưởng năm 2023 so với năm 2022, lấy năm 2022 = 100% (làm tròn một chữ số thập phân).",a:101.9,unit:"%"}
+];
+
+let activeCoin=null;
+let activeCoinQuestion=null;
+let coinQuestionUsed=[];
+
+function parseCoinAnswer(value){
+return Number(value.trim().replace(/\s/g,"").replace(/,/g,"."));
+}
+
+function openCoinQuestion(coin){
+if(activeCoin||gameOver||gameWon)return;
+
+activeCoin=coin;
+
+if(coinQuestionUsed.length===coinQuestions.length){
+coinQuestionUsed=[];
+}
+
+const available=coinQuestions.map((q,i)=>i).filter(i=>!coinQuestionUsed.includes(i));
+const index=available[Math.floor(Math.random()*available.length)];
+
+coinQuestionUsed.push(index);
+activeCoinQuestion=coinQuestions[index];
+
+document.getElementById("coinTitle").textContent="🪙 THỬ THÁCH NHẬN XU";
+document.getElementById("coinQuestion").textContent=activeCoinQuestion.q;
+document.getElementById("coinAnswer").value="";
+document.getElementById("coinAnswer").disabled=false;
+document.getElementById("coinFeedback").className="coin-feedback";
+document.getElementById("coinFeedback").style.display="none";
+document.getElementById("coinSubmit").style.display="inline-block";
+document.getElementById("coinContinue").style.display="none";
+document.getElementById("coinModal").classList.add("show");
+}
+
+function checkCoinAnswer(){
+if(!activeCoin||!activeCoinQuestion)return;
+
+const input=document.getElementById("coinAnswer");
+const answer=parseCoinAnswer(input.value);
+
+if(input.value.trim()===""||!Number.isFinite(answer)){
+alert("Bạn hãy nhập đáp án bằng số nhé!");
+return;
+}
+
+const correct=activeCoinQuestion.a;
+const decimalPlaces=String(correct).includes(".")?String(correct).split(".")[1].length:0;
+const tolerance=decimalPlaces===0?0.01:(decimalPlaces===1?0.051:0.0051);
+const feedback=document.getElementById("coinFeedback");
+
+input.disabled=true;
+document.getElementById("coinSubmit").style.display="none";
+document.getElementById("coinContinue").style.display="inline-block";
+
+if(Math.abs(answer-correct)<=tolerance){
+activeCoin.collected=true;
+coinsCollected++;
+document.getElementById("coinCount").textContent=coinsCollected;
+
+document.getElementById("coinTitle").textContent="🎉 CHÍNH XÁC!";
+feedback.className="coin-feedback good";
+feedback.innerHTML="🥳 Tuyệt vời! Bạn đã trả lời đúng và nhận được <strong>+1 xu</strong>!<br>Đáp án: <strong>"+correct+" "+activeCoinQuestion.unit+"</strong>";
+document.getElementById("gameMessage").textContent="🎉 Chính xác! Bạn đã thu thập được một đồng xu!";
+}else{
+document.getElementById("coinTitle").textContent="😢 TIẾC QUÁ!";
+feedback.className="coin-feedback bad";
+feedback.innerHTML="Bạn chưa nhận được xu lần này rồi!<br>Đáp án của bạn chưa chính xác. Hãy thử lại nhé!";
+document.getElementById("gameMessage").textContent="😢 Chưa đúng rồi! Bạn có thể thử lại câu hỏi để nhận xu.";
+}
+
+feedback.style.display="block";
+}
+
+function closeCoinModal(){
+document.getElementById("coinModal").classList.remove("show");
+
+if(activeCoin&&!activeCoin.collected){
+activeCoin.questionAsked=false;
+activeCoin.retryBlocked=true;
+}
+
+activeCoin=null;
+activeCoinQuestion=null;
+}
+
+/* =================================
+   GREEN MEADOW - PIXEL ADVENTURE
+================================= */
+
+const canvas=document.getElementById("gameCanvas");
+const ctx=canvas.getContext("2d");
+const WORLD_WIDTH=3200;
+const GROUND_Y=360;
+
+ctx.imageSmoothingEnabled=false;
+
+let cameraX=0;
+let coinsCollected=0;
+let lives=3;
+let gameWon=false;
+let gameOver=false;
+let invincibleTimer=0;
+let animationFrame=0;
+
+const player={
+x:60,y:316,width:32,height:44,
+vx:0,vy:0,speed:4,jumpPower:12,
+onGround:true,facing:1,state:"idle"
+};
+
+const keys={left:false,right:false,jump:false};
+
+/* BỤC NHẢY */
+const platforms=[
+{x:300,y:300,w:120,h:18},
+{x:520,y:260,w:130,h:18},
+{x:780,y:310,w:140,h:18},
+{x:1050,y:275,w:130,h:18},
+{x:1320,y:235,w:130,h:18},
+{x:1600,y:290,w:150,h:18},
+{x:1900,y:250,w:140,h:18},
+{x:2200,y:300,w:140,h:18},
+{x:2500,y:260,w:150,h:18},
+{x:2780,y:300,w:140,h:18}
+];
+
+/* VỊ TRÍ XU */
+const coinPositions=[
+{x:340,y:260},{x:390,y:260},
+{x:560,y:220},{x:610,y:220},
+{x:830,y:270},{x:1090,y:235},
+{x:1370,y:195},{x:1650,y:250},
+{x:1950,y:210},{x:2250,y:260},
+{x:2550,y:220},{x:2830,y:260}
+];
+
+let coins=[];
+
+/* CÂY */
+const trees=[
+{x:180,y:360,size:1.1},
+{x:680,y:360,size:1.3},
+{x:950,y:360,size:0.9},
+{x:1230,y:360,size:1.2},
+{x:1500,y:360,size:1.1},
+{x:1810,y:360,size:1.4},
+{x:2110,y:360,size:1.0},
+{x:2430,y:360,size:1.3},
+{x:2700,y:360,size:1.1},
+{x:2950,y:360,size:1.4}
+];
+
+/* CHƯỚNG NGẠI VẬT */
+const obstacles=[
+{x:230,y:338,w:30,h:22,type:"rock"},
+{x:470,y:330,w:34,h:30,type:"stump"},
+{x:720,y:338,w:30,h:22,type:"rock"},
+{x:970,y:330,w:34,h:30,type:"stump"},
+{x:1200,y:338,w:30,h:22,type:"rock"},
+{x:1510,y:330,w:34,h:30,type:"stump"},
+{x:1800,y:338,w:30,h:22,type:"rock"},
+{x:2110,y:330,w:34,h:30,type:"stump"},
+{x:2420,y:338,w:30,h:22,type:"rock"},
+{x:2700,y:330,w:34,h:30,type:"stump"},
+{x:2940,y:338,w:30,h:22,type:"rock"}
+];
+
+/* KHỞI ĐỘNG LẠI */
+function restartGame(){
+player.x=60;
+player.y=GROUND_Y-player.height;
+player.vx=0;
+player.vy=0;
+player.onGround=true;
+player.facing=1;
+player.state="idle";
+
+cameraX=0;
+coinsCollected=0;
+lives=3;
+gameWon=false;
+gameOver=false;
+invincibleTimer=0;
+animationFrame=0;
+
+coins=coinPositions.map(c=>({
+x:c.x,y:c.y,collected:false,
+questionAsked:false,retryBlocked:false
+}));
+
+activeCoin=null;
+activeCoinQuestion=null;
+coinQuestionUsed=[];
+
+document.getElementById("coinModal").classList.remove("show");
+document.getElementById("coinCount").textContent="0";
+document.getElementById("lifeCount").textContent="3";
+document.getElementById("gameMessage").textContent="Hãy bắt đầu hành trình! Né chướng ngại vật và thu thập xu nhé!";
+
+keys.left=false;
+keys.right=false;
+keys.jump=false;
+}
+
+/* BÀN PHÍM */
+document.addEventListener("keydown",function(e){
+if(e.code==="ArrowLeft"||e.code==="KeyA"){
+keys.left=true;e.preventDefault();
+}
+if(e.code==="ArrowRight"||e.code==="KeyD"){
+keys.right=true;e.preventDefault();
+}
+if(e.code==="Space"||e.code==="ArrowUp"||e.code==="KeyW"){
+keys.jump=true;e.preventDefault();
+}
+});
+
+document.addEventListener("keyup",function(e){
+if(e.code==="ArrowLeft"||e.code==="KeyA")keys.left=false;
+if(e.code==="ArrowRight"||e.code==="KeyD")keys.right=false;
+if(e.code==="Space"||e.code==="ArrowUp"||e.code==="KeyW")keys.jump=false;
+});
+
+/* CẢM ỨNG */
+function setupTouchButton(id,keyName){
+const button=document.getElementById(id);
+
+button.addEventListener("pointerdown",function(e){
+e.preventDefault();
+keys[keyName]=true;
+if(button.setPointerCapture)button.setPointerCapture(e.pointerId);
+});
+
+function release(){keys[keyName]=false}
+button.addEventListener("pointerup",release);
+button.addEventListener("pointercancel",release);
+button.addEventListener("lostpointercapture",release);
+button.addEventListener("contextmenu",e=>e.preventDefault());
+}
+
+setupTouchButton("leftBtn","left");
+setupTouchButton("rightBtn","right");
+setupTouchButton("jumpBtn","jump");
+
+/* VA CHẠM */
+function isColliding(a,b){
+return a.x<b.x+b.w&&a.x+a.width>b.x&&a.y<b.y+b.h&&a.y+a.height>b.y;
+}
+
+/* MẤT MẠNG */
+function loseLife(){
+if(invincibleTimer>0||gameOver||gameWon||activeCoin)return;
+
+lives--;
+document.getElementById("lifeCount").textContent=lives;
+
+if(lives<=0){
+gameOver=true;
+keys.left=false;
+keys.right=false;
+keys.jump=false;
+document.getElementById("gameMessage").textContent="💔 Bạn đã hết mạng! Nhấn CHƠI LẠI để bắt đầu hành trình mới.";
+return;
+}
+
+player.x=Math.max(60,player.x-100);
+player.y=GROUND_Y-player.height;
+player.vx=0;
+player.vy=0;
+player.onGround=true;
+invincibleTimer=100;
+
+document.getElementById("gameMessage").textContent="⚡ Ôi! Bạn vừa va phải chướng ngại vật. Còn "+lives+" mạng. Cẩn thận hơn nhé!";
+}
+
+/* CẬP NHẬT NHÂN VẬT */
+function updatePlayer(){
+if(gameWon||gameOver||activeCoin)return;
+
+if(invincibleTimer>0)invincibleTimer--;
+
+player.vx=0;
+if(keys.left){player.vx=-player.speed;player.facing=-1}
+if(keys.right){player.vx=player.speed;player.facing=1}
+
+player.x+=player.vx;
+if(player.x<0)player.x=0;
+if(player.x+player.width>WORLD_WIDTH)player.x=WORLD_WIDTH-player.width;
+
+if(keys.jump&&player.onGround){
+player.vy=-player.jumpPower;
+player.onGround=false;
+}
+
+const previousBottom=player.y+player.height;
+
+player.vy+=0.55;
+if(player.vy>13)player.vy=13;
+
+player.y+=player.vy;
+player.onGround=false;
+
+/* MẶT ĐẤT */
+if(player.y+player.height>=GROUND_Y){
+player.y=GROUND_Y-player.height;
+player.vy=0;
+player.onGround=true;
+}
+
+/* BỤC NHẢY */
+platforms.forEach(p=>{
+const overlap=player.x+player.width>p.x&&player.x<p.x+p.w;
+const landed=previousBottom<=p.y&&player.y+player.height>=p.y&&player.vy>=0;
+
+if(overlap&&landed){
+player.y=p.y-player.height;
+player.vy=0;
+player.onGround=true;
+}
+});
+
+/* TRẠNG THÁI HOẠT ẢNH */
+if(!player.onGround)player.state="jump";
+else if(Math.abs(player.vx)>0)player.state="run";
+else player.state="idle";
+
+if(Math.abs(player.vx)>0)animationFrame+=0.22;
+else animationFrame=0;
+
+/* CHƯỚNG NGẠI VẬT */
+const playerBox={
+x:player.x+5,
+y:player.y+5,
+width:player.width-10,
+height:player.height-7
+};
+
+for(const obstacle of obstacles){
+if(isColliding(playerBox,obstacle)){
+loseLife();
+break;
+}
+}
+
+/* CHẠM XU - HIỆN CÂU HỎI */
+coins.forEach(coin=>{
+if(coin.collected||coin.questionAsked||coin.retryBlocked)return;
+
+const dx=player.x+player.width/2-coin.x;
+const dy=player.y+player.height/2-coin.y;
+
+if(Math.sqrt(dx*dx+dy*dy)<28){
+coin.questionAsked=true;
+keys.left=false;
+keys.right=false;
+keys.jump=false;
+openCoinQuestion(coin);
+}
+});
+
+/* CHO PHÉP THỬ LẠI KHI ĐÃ RỜI XA XU */
+coins.forEach(coin=>{
+if(!coin.collected&&coin.retryBlocked){
+const dx=player.x+player.width/2-coin.x;
+const dy=player.y+player.height/2-coin.y;
+if(Math.sqrt(dx*dx+dy*dy)>45){
+coin.retryBlocked=false;
+}
+}
+});
+
+/* VỀ ĐÍCH */
+if(player.x>3040&&!activeCoin){
+gameWon=true;
+document.getElementById("gameMessage").textContent="🎉 CHÚC MỪNG! Bạn đã hoàn thành MAP 01 và thu thập được "+coinsCollected+" xu!";
+}
+
+/* CAMERA */
+cameraX=player.x-350;
+cameraX=Math.max(0,Math.min(cameraX,WORLD_WIDTH-canvas.width));
+}
+
+/* BẦU TRỜI */
+function drawSky(){
+const gradient=ctx.createLinearGradient(0,0,0,420);
+gradient.addColorStop(0,"#73caff");
+gradient.addColorStop(1,"#d9f4ff");
+ctx.fillStyle=gradient;
+ctx.fillRect(0,0,960,420);
+}
+
+/* MÂY */
+function drawCloud(x,y,size){
+ctx.fillStyle="#fff";
+ctx.fillRect(x,y,55*size,20*size);
+ctx.fillRect(x+12*size,y-12*size,25*size,20*size);
+ctx.fillRect(x+32*size,y-7*size,25*size,15*size);
+}
+
+/* ĐỒI */
+function drawHills(){
+ctx.fillStyle="#9bdc9a";
+for(let i=0;i<8;i++){
+const x=i*480-(cameraX*0.2%480);
+ctx.beginPath();
+ctx.ellipse(x,345,280,100,0,0,Math.PI*2);
+ctx.fill();
+}
+}
+
+/* CÂY */
+function drawTree(x,y,size){
+ctx.save();
+ctx.translate(x,y);
+ctx.scale(size,size);
+
+ctx.fillStyle="#8a572c";
+ctx.fillRect(-8,-65,16,65);
+
+ctx.fillStyle="#1e8748";
+ctx.fillRect(-38,-105,76,45);
+ctx.fillRect(-25,-125,50,35);
+ctx.fillRect(-48,-88,96,25);
+
+ctx.fillStyle="#39a95b";
+ctx.fillRect(-24,-115,18,15);
+ctx.fillRect(10,-95,20,15);
+
+ctx.restore();
+}
+
+/* MẶT ĐẤT */
+function drawGround(){
+ctx.fillStyle="#8b5a32";
+ctx.fillRect(0,GROUND_Y,WORLD_WIDTH,60);
+
+ctx.fillStyle="#45b94d";
+ctx.fillRect(0,GROUND_Y,WORLD_WIDTH,12);
+
+ctx.fillStyle="#6d4328";
+for(let x=0;x<WORLD_WIDTH;x+=70){
+ctx.fillRect(x,385,25,5);
+ctx.fillRect(x+35,405,18,5);
+}
+}
+
+/* BỤC ĐẤT */
+function drawPlatforms(){
+platforms.forEach(p=>{
+ctx.fillStyle="#80512e";
+ctx.fillRect(p.x,p.y,p.w,p.h);
+
+ctx.fillStyle="#47b94e";
+ctx.fillRect(p.x,p.y,p.w,8);
+
+ctx.fillStyle="#b77b47";
+for(let x=p.x+12;x<p.x+p.w-8;x+=35){
+ctx.fillRect(x,p.y+11,12,4);
+}
+});
+}
+
+/* CHƯỚNG NGẠI VẬT */
+function drawObstacles(){
+obstacles.forEach(o=>{
+if(o.type==="rock"){
+ctx.fillStyle="#647b8b";
+ctx.fillRect(o.x+5,o.y,20,8);
+ctx.fillRect(o.x,o.y+8,30,14);
+
+ctx.fillStyle="#9aafba";
+ctx.fillRect(o.x+6,o.y+5,7,5);
+ctx.fillRect(o.x+5,o.y+13,5,4);
+}else{
+ctx.fillStyle="#754323";
+ctx.fillRect(o.x+4,o.y+7,26,23);
+
+ctx.fillStyle="#a86a37";
+ctx.fillRect(o.x,o.y,34,12);
+
+ctx.fillStyle="#d49a59";
+ctx.fillRect(o.x+8,o.y+3,15,4);
+}
+});
+}
+
+/* XU */
+function drawCoins(){
+coins.forEach(coin=>{
+if(coin.collected)return;
+
+ctx.fillStyle="#ffca28";
+ctx.fillRect(coin.x-7,coin.y-10,14,20);
+
+ctx.fillStyle="#e69b00";
+ctx.fillRect(coin.x-9,coin.y-7,3,14);
+ctx.fillRect(coin.x+6,coin.y-7,3,14);
+
+ctx.fillStyle="#fff2a6";
+ctx.fillRect(coin.x-2,coin.y-6,4,12);
+});
+}
+
+/* CỜ ĐÍCH */
+function drawFlag(){
+const flagX=3070;
+
+ctx.fillStyle="#704323";
+ctx.fillRect(flagX,220,9,140);
+
+ctx.fillStyle="#ffdf55";
+ctx.fillRect(flagX+9,225,75,42);
+
+ctx.fillStyle="#1769aa";
+ctx.font="bold 12px Arial";
+ctx.fillText("GEO",flagX+22,251);
+
+ctx.fillStyle="#fff";
+ctx.fillRect(flagX-8,355,42,5);
+}
+
+/* NHÂN VẬT CON NGƯỜI PIXEL */
+function drawPlayer(){
+if(invincibleTimer>0&&Math.floor(invincibleTimer/6)%2===0)return;
+
+ctx.save();
+
+const x=Math.round(player.x);
+const y=Math.round(player.y);
+
+if(player.facing===-1){
+ctx.translate(x+player.width,0);
+ctx.scale(-1,1);
+}else{
+ctx.translate(x,0);
+}
+
+const moving=player.state==="run";
+const jumping=player.state==="jump";
+const step=Math.floor(animationFrame)%2;
+
+/* Bóng */
+ctx.fillStyle="#47734b";
+ctx.fillRect(5,y+42,24,3);
+
+/* Chân và giày */
+if(jumping){
+ctx.fillStyle="#244c78";
+ctx.fillRect(5,y+32,9,8);
+ctx.fillRect(20,y+30,9,8);
+
+ctx.fillStyle="#26384e";
+ctx.fillRect(2,y+38,12,5);
+ctx.fillRect(19,y+36,12,5);
+}else if(moving&&step===0){
+ctx.fillStyle="#244c78";
+ctx.fillRect(7,y+30,8,10);
+ctx.fillRect(19,y+33,8,7);
+
+ctx.fillStyle="#26384e";
+ctx.fillRect(4,y+38,12,5);
+ctx.fillRect(19,y+38,12,5);
+}else if(moving){
+ctx.fillStyle="#244c78";
+ctx.fillRect(7,y+33,8,7);
+ctx.fillRect(19,y+30,8,10);
+
+ctx.fillStyle="#26384e";
+ctx.fillRect(4,y+38,12,5);
+ctx.fillRect(19,y+38,12,5);
+}else{
+ctx.fillStyle="#244c78";
+ctx.fillRect(7,y+31,8,9);
+ctx.fillRect(19,y+31,8,9);
+
+ctx.fillStyle="#26384e";
+ctx.fillRect(4,y+38,12,5);
+ctx.fillRect(18,y+38,12,5);
+}
+
+/* Thân áo */
+ctx.fillStyle="#f0f5ff";
+ctx.fillRect(7,y+17,19,16);
+
+/* Áo khoác xanh */
+ctx.fillStyle="#287fc0";
+ctx.fillRect(7,y+18,19,9);
+ctx.fillRect(9,y+27,15,5);
+
+/* Cổ */
+ctx.fillStyle="#f4c9a2";
+ctx.fillRect(13,y+14,8,5);
+
+/* Tay áo */
+ctx.fillStyle="#287fc0";
+if(moving&&step===0){
+ctx.fillRect(2,y+19,6,10);
+ctx.fillRect(25,y+22,6,9);
+}else if(moving){
+ctx.fillRect(2,y+22,6,9);
+ctx.fillRect(25,y+19,6,10);
+}else{
+ctx.fillRect(2,y+20,6,11);
+ctx.fillRect(25,y+20,6,11);
+}
+
+/* Bàn tay */
+ctx.fillStyle="#f4c9a2";
+ctx.fillRect(2,y+29,6,5);
+ctx.fillRect(25,y+29,6,5);
+
+/* Ba lô */
+ctx.fillStyle="#e7a72f";
+ctx.fillRect(24,y+19,5,12);
+ctx.fillStyle="#ffcf55";
+ctx.fillRect(25,y+21,3,5);
+
+/* Tóc */
+ctx.fillStyle="#56351f";
+ctx.fillRect(7,y+3,19,7);
+ctx.fillRect(5,y+7,5,10);
+ctx.fillRect(23,y+7,5,7);
+ctx.fillRect(9,y,14,5);
+
+/* Mặt */
+ctx.fillStyle="#f4c9a2";
+ctx.fillRect(8,y+7,18,12);
+ctx.fillRect(11,y+17,12,2);
+
+/* Mắt */
+ctx.fillStyle="#292929";
+ctx.fillRect(20,y+11,3,3);
+
+/* Má */
+ctx.fillStyle="#e99d91";
+ctx.fillRect(10,y+14,3,2);
+
+/* Huy hiệu */
+ctx.fillStyle="#ffdf55";
+ctx.fillRect(15,y+21,5,5);
+
+ctx.restore();
+}
+
+/* VẼ BẢN ĐỒ */
+function drawGame(){
+drawSky();
+
+drawCloud(80-cameraX*0.15%1100,70,1);
+drawCloud(450-cameraX*0.15%1100,115,1.2);
+drawCloud(800-cameraX*0.15%1100,55,0.9);
+
+drawHills();
+
+ctx.save();
+ctx.translate(-cameraX,0);
+
+trees.forEach(tree=>drawTree(tree.x,tree.y,tree.size));
+
+drawGround();
+drawPlatforms();
+drawObstacles();
+drawCoins();
+drawFlag();
+drawPlayer();
+
+ctx.restore();
+
+/* MÀN HÌNH KẾT THÚC */
+if(gameOver||gameWon){
+ctx.fillStyle="#173d5ccc";
+ctx.fillRect(250,135,460,125);
+
+ctx.fillStyle="#fff";
+ctx.textAlign="center";
+ctx.font="bold 25px Arial";
+ctx.fillText(gameWon?"MAP 01 COMPLETED!":"GAME OVER!",480,185);
+
+ctx.font="16px Arial";
+ctx.fillText(gameWon?"Bạn đã chinh phục đồng cỏ xanh!":"Hãy thử lại hành trình nhé!",480,220);
+
+ctx.textAlign="left";
+}
+}
+
+/* VÒNG LẶP GAME */
+function gameLoop(){
+const gameScreen=document.getElementById("game");
+
+if(gameScreen&&gameScreen.classList.contains("active")){
+if(!gameWon&&!gameOver&&!activeCoin)updatePlayer();
+drawGame();
+}
+
+requestAnimationFrame(gameLoop);
+}
+
+restartGame();
+gameLoop();
+
+</script>
+</body>
+</html>
